@@ -1,0 +1,43 @@
+name: krishna_ai
+description: "Krishna AI — an advanced AI personal assistant for Android."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management & DI
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Networking
+  dio: ^5.7.0
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Secure / local storage
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.3.4
+
+  # Value equality & functional error handling
+  equatable: ^2.0.7
+  dartz: ^0.10.1
+
+  # Utils
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.4
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.13
+
+flutter:
+  uses-material-design: true
