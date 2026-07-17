@@ -22,8 +22,9 @@ Krishna AI is a modular, production-oriented personal assistant. It pairs a
 modules (chat, voice, notes, meetings, tasks, RAG-based memory, and more),
 delivered **incrementally** — one fully-tested module at a time.
 
-> **Status:** Foundation + **Module 1 (Authentication)** complete and tested.
-> See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the module plan and progress.
+> **Status:** Foundation, **Authentication**, and **AI Chat** (streaming, with
+> conversation history) complete and tested. See [`docs/ROADMAP.md`](docs/ROADMAP.md)
+> for the module plan and progress.
 
 ## Repository structure
 
@@ -90,6 +91,18 @@ flutter run                                # emulator reaches host at 10.0.2.2
   federated-identity columns.
 - Mobile: secure Keystore-backed token storage, transparent refresh-and-retry
   interceptor, auth-aware routing, Material 3 login/register UI.
+
+## Module 3 — AI Chat (implemented)
+
+- **Streaming replies** over Server-Sent Events, powered by Claude
+  (`claude-opus-4-8`) through a provider-agnostic `LLMClient` abstraction that is
+  fully mocked in tests (the suite needs no API key or network).
+- Conversation **CRUD + history**: create, list, rename, delete; messages
+  persisted per user; conversations auto-titled from the first message.
+- Mobile: conversation list, live token-by-token chat UI with a typing
+  indicator, optimistic sends, and error recovery.
+- Set `ANTHROPIC_API_KEY` in `backend/.env` to enable it (endpoints return
+  `503 ai_unavailable` until configured).
 
 ## Documentation
 

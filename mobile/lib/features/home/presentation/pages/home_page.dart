@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 
 /// Placeholder authenticated landing screen. Later modules (AI Chat, Notes,
@@ -37,11 +39,17 @@ class HomePage extends ConsumerWidget {
               Text('Hello, $name', style: theme.textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
-                'Your assistant is ready. Modules such as AI Chat, Notes and '
-                'Tasks will appear here as they ship.',
+                'Your assistant is ready. Start chatting with Krishna — more '
+                'modules (Notes, Tasks, Voice) will appear here as they ship.',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium
                     ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: () => context.push(Routes.conversations),
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text('Open AI Chat'),
               ),
             ],
           ),

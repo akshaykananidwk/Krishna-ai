@@ -44,3 +44,17 @@ class InvalidTokenError(AppError):
 
     status_code = 401
     error_code = "invalid_token"
+
+
+class ResourceNotFoundError(AppError):
+    """The requested resource does not exist."""
+
+    status_code = 404
+    error_code = "not_found"
+
+
+class AIServiceUnavailableError(AppError):
+    """The AI provider is not configured or is temporarily unavailable."""
+
+    status_code = 503
+    error_code = "ai_unavailable"

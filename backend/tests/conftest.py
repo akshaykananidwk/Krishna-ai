@@ -15,7 +15,7 @@ os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
 
 import pytest
 import pytest_asyncio
-from app.api.deps import get_db
+from app.api.deps import get_db, get_llm_client
 from app.core import redis_client as redis_module
 from app.main import app
 from app.models import Base
@@ -82,10 +82,40 @@ async def client(db_engine, monkeypatch) -> AsyncGenerator[AsyncClient, None]:
     monkeypatch.setattr(rl_module, "redis_client", fake_redis)
 
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient()
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
+
+
+class FakeLLMClient:
+    """Deterministic in-memory LLM used by the test suite (no network)."""
+
+    def __init__(self, reply: str = "Hello from Krishna.") -> None:
+        self._reply = reply
+
+    @property
+    def model(self) -> str:
+        return "fake-model"
+
+    async def stream_reply(self, *, system, history):  # noqa: ANN001, D401
+        # Echo the reply in a couple of chunks to exercise streaming.
+        mid = max(1, len(self._reply) // 2)
+        yield self._reply[:mid]
+        yield self._reply[mid:]
+
+
+async def _register(client: AsyncClient, payload: dict) -> dict:
+    resp = await client.post("/api/v1/auth/register", json=payload)
+    assert resp.status_code == 201, resp.text
+    return resp.json()
+
+
+@pytest_asyncio.fixture
+async def auth_headers(client, valid_user_payload) -> dict[str, str]:
+    body = await _register(client, valid_user_payload)
+    return {"Authorization": f"Bearer {body['access_token']}"}
 
 
 @pytest.fixture

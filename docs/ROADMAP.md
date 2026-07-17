@@ -14,6 +14,8 @@ next begins.
   rate limiting, security headers, domain-error handling, audit logging
 - ✅ Mobile core: Clean Architecture, Riverpod DI, Dio + refresh interceptor,
   secure token storage, Material 3 theme, auth-aware routing
+- ✅ AI layer: provider-agnostic `LLMClient` (Anthropic Claude), streamed
+  Server-Sent-Events chat, conversation persistence
 
 ## Modules
 
@@ -21,7 +23,8 @@ next begins.
 |---|--------|--------|
 | 1 | Authentication | ✅ done |
 | 2 | User Profile | ⬜ |
-| 3 | AI Chat | ⬜ |
+| 3 | AI Chat | ✅ done |
+| 6 | Conversation History | ✅ done (with AI Chat) |
 | 4 | Voice Input | ⬜ |
 | 5 | Speech-to-Text | ⬜ |
 | 6 | Text-to-Speech | ⬜ |

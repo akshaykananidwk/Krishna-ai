@@ -60,11 +60,39 @@ Composite index `ix_refresh_tokens_user_active (user_id, revoked_at)` supports
 | user_agent  | varchar(512)  | nullable                                    |
 | created_at  | timestamptz   | server default now()                        |
 
+## Module 3 schema (AI Chat) — migration `0002_chat`
+
+### `conversations`
+
+| Column          | Type         | Notes                                   |
+|-----------------|--------------|-----------------------------------------|
+| id              | UUID (PK)    |                                         |
+| user_id         | UUID (FK)    | → `users.id`, ON DELETE CASCADE, indexed|
+| title           | varchar(200) | default `New chat`; auto-set from first message |
+| last_message_at | timestamptz  | nullable; drives recency ordering       |
+| archived_at     | timestamptz  | nullable                                |
+| created_at / updated_at | timestamptz | server-managed                   |
+
+Composite index `ix_conversations_user_recent (user_id, last_message_at)`.
+
+### `messages`
+
+| Column          | Type         | Notes                                   |
+|-----------------|--------------|-----------------------------------------|
+| id              | UUID (PK)    |                                         |
+| conversation_id | UUID (FK)    | → `conversations.id`, ON DELETE CASCADE, indexed |
+| role            | varchar(16)  | `user` / `assistant` / `system`         |
+| content         | text         |                                         |
+| model           | varchar(64)  | nullable; set on assistant messages     |
+| token_count     | integer      | nullable                                |
+| created_at      | timestamptz  | server default now()                    |
+
 ## Entity relationships
 
 ```
 users 1 ──────< refresh_tokens        (cascade delete)
 users 1 ──────< audit_logs            (set null on delete)
+users 1 ──────< conversations 1 ──< messages   (cascade delete)
 ```
 
 ## Planned tables (future modules)

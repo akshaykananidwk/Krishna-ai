@@ -60,6 +60,17 @@ class Settings(BaseSettings):
     # ---- Firebase ----
     FIREBASE_CREDENTIALS_PATH: str = ""
 
+    # ---- AI / Anthropic (Module: AI Chat) ----
+    ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_MODEL: str = "claude-opus-4-8"
+    AI_MAX_TOKENS: int = 4096
+    # Upper bound on prior turns replayed to the model (keeps context bounded).
+    AI_HISTORY_LIMIT: int = 40
+    AI_SYSTEM_PROMPT: str = (
+        "You are Krishna, a helpful, concise, privacy-respecting AI personal "
+        "assistant. Answer clearly and cite uncertainty honestly."
+    )
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def _split_cors(cls, value: object) -> object:

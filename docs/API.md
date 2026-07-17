@@ -87,6 +87,46 @@ register/login ──▶ { access, refresh }
       └─ on 401 ──▶ POST /auth/refresh ──▶ new { access, refresh }  (old refresh revoked)
 ```
 
+## AI Chat — `/chat`
+
+All routes require `Authorization: Bearer <access_token>`. Conversations and
+messages are scoped to the authenticated user.
+
+### `POST /chat/conversations` → `201`
+Create an (optionally titled) conversation.
+```json
+{ "title": "Trip planning" }
+```
+Returns a `ConversationSummary`: `{ id, title, last_message_at, created_at, updated_at }`.
+
+### `GET /chat/conversations` → `200`
+List the user's conversations (most-recent first), each a `ConversationSummary`.
+
+### `GET /chat/conversations/{id}` → `200`
+Return the conversation plus its `messages` (`{ id, role, content, model, created_at }`).
+`404 not_found` if it doesn't exist or belongs to another user.
+
+### `PATCH /chat/conversations/{id}` → `200`
+Rename: `{ "title": "New name" }`.
+
+### `DELETE /chat/conversations/{id}` → `200`
+`{ "detail": "Conversation deleted." }`.
+
+### `POST /chat/conversations/{id}/messages` → `200` (Server-Sent Events)
+Send a user message and **stream** the assistant reply. Response
+`Content-Type: text/event-stream`. Request: `{ "content": "..." }`.
+
+Each SSE frame is `data: <json>\n\n`, where `<json>` is one of:
+```
+{ "type": "start", "conversation_id": "..." }
+{ "type": "delta", "text": "partial text" }
+{ "type": "done",  "message_id": "...", "content": "full text", "model": "claude-opus-4-8" }
+{ "type": "error", "detail": "..." }
+```
+The user message and the final assistant message are persisted; the first
+message auto-titles the conversation. Returns `503 ai_unavailable` (before the
+stream starts) if `ANTHROPIC_API_KEY` is unset.
+
 ## Rate limiting
 
 Fixed-window per client IP + path (default 60 req/min). Responses include
