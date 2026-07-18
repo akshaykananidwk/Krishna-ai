@@ -16,6 +16,9 @@ next begins.
   secure token storage, Material 3 theme, auth-aware routing
 - ✅ AI layer: provider-agnostic `LLMClient` (Anthropic Claude), streamed
   Server-Sent-Events chat, conversation persistence
+- ✅ Memory Engine: provider-agnostic embeddings (local / OpenAI / Gemini) and
+  vector store (Qdrant / in-memory), semantic + filtered search, multi-signal
+  ranking, streaming RAG, background maintenance workers
 
 ## Modules
 
@@ -34,9 +37,9 @@ next begins.
 | 10 | Tasks | ⬜ |
 | 11 | Reminders | ⬜ |
 | 12 | Calendar | ⬜ |
-| 13 | Personal Knowledge Base | ⬜ |
-| 14 | Semantic Search | ⬜ |
-| 15 | AI Memory | ⬜ |
+| 13 | Personal Knowledge Base | ✅ done (Memory Engine) |
+| 14 | Semantic Search | ✅ done (Memory Engine) |
+| 15 | AI Memory | ✅ done (Memory Engine + RAG) |
 | 16 | OCR | ⬜ |
 | 17 | Image Understanding | ⬜ |
 | 18 | Document Analysis | ⬜ |

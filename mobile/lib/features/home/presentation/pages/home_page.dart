@@ -51,6 +51,12 @@ class HomePage extends ConsumerWidget {
                 icon: const Icon(Icons.chat_bubble_outline),
                 label: const Text('Open AI Chat'),
               ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => context.push(Routes.memory),
+                icon: const Icon(Icons.travel_explore),
+                label: const Text('Search Memory'),
+              ),
             ],
           ),
         ),

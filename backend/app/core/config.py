@@ -71,6 +71,28 @@ class Settings(BaseSettings):
         "assistant. Answer clearly and cite uncertainty honestly."
     )
 
+    # ---- Memory Engine (Module 4: Memory + Vector Search + RAG) ----
+    # Embeddings: "local" (dependency-free, deterministic — dev/test default),
+    # "openai", or "gemini". Providers are never hardcoded; see services/embeddings.
+    EMBEDDING_PROVIDER: str = "local"
+    EMBEDDING_MODEL: str = ""  # blank = provider default
+    OPENAI_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
+    LOCAL_EMBEDDING_DIM: int = 256
+
+    # Vector store: "memory" (in-process cosine — dev/test) or "qdrant".
+    VECTOR_STORE: str = "memory"
+    QDRANT_COLLECTION: str = "krishna_memory"
+
+    # Retrieval / RAG
+    RAG_TOP_K: int = 8
+    RAG_MIN_SCORE: float = 0.15
+    RAG_MAX_CONTEXT_CHARS: int = 6000
+    # Duplicate detection threshold (cosine similarity).
+    MEMORY_DUPLICATE_THRESHOLD: float = 0.92
+    # Days a soft-deleted memory is retained before the cleanup worker purges it.
+    MEMORY_RETENTION_DAYS: int = 30
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def _split_cors(cls, value: object) -> object:

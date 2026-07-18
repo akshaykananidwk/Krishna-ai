@@ -127,6 +127,45 @@ The user message and the final assistant message are persisted; the first
 message auto-titles the conversation. Returns `503 ai_unavailable` (before the
 stream starts) if `ANTHROPIC_API_KEY` is unset.
 
+## Memory Engine — `/memory`
+
+All routes require authentication and are user-scoped.
+
+| Method & path | Purpose |
+|---------------|---------|
+| `POST /memory` | Create + auto-embed a memory (`content`, `title?`, `source_type`, `tags?`, `metadata?`) → `201` `MemoryPublic` |
+| `GET /memory` | List memories (filters: `source_type`, `pinned`, `status`, `limit`, `offset`) |
+| `POST /memory/search` | Semantic + filtered search → ranked `results[]` with `score` & `similarity`, plus `latency_ms` |
+| `GET /memory/{id}` | Get one memory |
+| `GET /memory/{id}/related` | Memories similar to this one |
+| `PATCH /memory/{id}` | Update title/content/importance/pinned/tags (re-embeds on change) |
+| `DELETE /memory/{id}` | Soft-delete (moves to trash) |
+| `POST /memory/{id}/restore` / `/archive` | Restore or archive |
+| `POST /memory/{id}/bookmark` | Toggle bookmark |
+| `POST /memory/{id}/feedback` | `{ "signal": +1 | -1 }` relevance feedback |
+| `POST /memory/{id}/tags` | Add tags |
+| `POST /memory/collections/new` · `GET /memory/collections/all` | Manage collections |
+
+**Search request**
+```json
+{ "query": "rocket engine Apollo", "top_k": 8,
+  "source_types": ["note"], "tags": ["space"],
+  "created_after": "2026-01-01T00:00:00Z" }
+```
+Results are re-ranked by similarity + recency + importance + frequency +
+feedback + pinned boost.
+
+## RAG — `/rag/query` (Server-Sent Events)
+
+Memory-grounded, streamed answer. Request `{ "query": "...", "top_k": 8 }`.
+SSE frames (`data: <json>\n\n`):
+```
+{ "type": "sources", "sources": [ { "index": 1, "memory_id": "...", "title": "..." } ] }
+{ "type": "delta",   "text": "partial answer" }
+{ "type": "done",    "content": "full answer", "model": "claude-opus-4-8", "used_memories": 3 }
+{ "type": "error",   "detail": "..." }
+```
+
 ## Rate limiting
 
 Fixed-window per client IP + path (default 60 req/min). Responses include

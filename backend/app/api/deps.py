@@ -14,11 +14,18 @@ from app.core.exceptions import InactiveUserError, InvalidTokenError
 from app.core.security import TokenType, decode_token
 from app.models.user import User
 from app.repositories.chat_repository import ChatRepository
+from app.repositories.memory_repository import MemoryRepository
 from app.repositories.user_repository import UserRepository
 from app.services.auth_service import AuthService
 from app.services.chat_service import ChatService
+from app.services.embeddings.base import EmbeddingProvider
+from app.services.embeddings.factory import build_embedding_provider
 from app.services.llm.anthropic_client import AnthropicLLMClient
 from app.services.llm.base import LLMClient
+from app.services.memory.memory_service import MemoryService
+from app.services.memory.rag_service import RagService
+from app.services.vectorstore.base import VectorStore
+from app.services.vectorstore.factory import build_vector_store
 
 _bearer = HTTPBearer(auto_error=False)
 
@@ -56,6 +63,43 @@ def get_chat_service(db: DbSession, llm: LLMClientDep) -> ChatService:
 
 
 ChatServiceDep = Annotated[ChatService, Depends(get_chat_service)]
+
+
+# ---- Memory Engine (Module 4) ---- #
+# Embedding provider and vector store are process-wide (stateless / singleton);
+# tests override these dependencies with a local embedder + fresh in-memory store.
+_embedding_provider: EmbeddingProvider = build_embedding_provider()
+_vector_store: VectorStore = build_vector_store()
+
+
+def get_embedding_provider() -> EmbeddingProvider:
+    return _embedding_provider
+
+
+def get_vector_store() -> VectorStore:
+    return _vector_store
+
+
+EmbeddingProviderDep = Annotated[EmbeddingProvider, Depends(get_embedding_provider)]
+VectorStoreDep = Annotated[VectorStore, Depends(get_vector_store)]
+
+
+def get_memory_service(
+    db: DbSession,
+    embeddings: EmbeddingProviderDep,
+    vector_store: VectorStoreDep,
+) -> MemoryService:
+    return MemoryService(MemoryRepository(db), embeddings, vector_store)
+
+
+MemoryServiceDep = Annotated[MemoryService, Depends(get_memory_service)]
+
+
+def get_rag_service(memory: MemoryServiceDep, llm: LLMClientDep) -> RagService:
+    return RagService(memory, llm)
+
+
+RagServiceDep = Annotated[RagService, Depends(get_rag_service)]
 
 
 def get_request_meta(request: Request) -> dict[str, str | None]:

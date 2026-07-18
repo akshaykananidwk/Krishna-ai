@@ -15,10 +15,17 @@ os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
 
 import pytest
 import pytest_asyncio
-from app.api.deps import get_db, get_llm_client
+from app.api.deps import (
+    get_db,
+    get_embedding_provider,
+    get_llm_client,
+    get_vector_store,
+)
 from app.core import redis_client as redis_module
 from app.main import app
 from app.models import Base
+from app.services.embeddings.local import LocalEmbeddingProvider
+from app.services.vectorstore.memory import InMemoryVectorStore
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
@@ -81,8 +88,14 @@ async def client(db_engine, monkeypatch) -> AsyncGenerator[AsyncClient, None]:
 
     monkeypatch.setattr(rl_module, "redis_client", fake_redis)
 
+    # Fresh in-memory vector store + deterministic local embedder per test.
+    test_vector_store = InMemoryVectorStore()
+    test_embedder = LocalEmbeddingProvider(dim=256)
+
     app.dependency_overrides[get_db] = _override_get_db
     app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient()
+    app.dependency_overrides[get_embedding_provider] = lambda: test_embedder
+    app.dependency_overrides[get_vector_store] = lambda: test_vector_store
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac

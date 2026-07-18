@@ -87,12 +87,37 @@ Composite index `ix_conversations_user_recent (user_id, last_message_at)`.
 | token_count     | integer      | nullable                                |
 | created_at      | timestamptz  | server default now()                    |
 
+## Module 4 schema (Memory Engine) — migration `0003_memory`
+
+PostgreSQL is the **source of truth**; Qdrant holds only vectors keyed by
+`memory_items.id`. All tables are user-scoped.
+
+| Table | Purpose |
+|-------|---------|
+| `memory_items` | Source of truth for a memory: content, `source_type`, `importance`, `pinned`, `status` (active/archived/deleted), access counters, soft-delete timestamps |
+| `memory_embeddings` | Per-memory embedding record: provider, model, dim, `vector_id`, `status` (pending/ready/failed), `attempts` — drives the retry worker |
+| `memory_tags` | Tags (manual or `auto`), unique per (memory, tag) |
+| `memory_collections` + `memory_collection_items` | User-defined groupings (many-to-many) |
+| `memory_bookmarks` | User bookmarks, unique per (user, memory) |
+| `memory_feedback` | `+1`/`-1` relevance signal per (user, memory) — feeds ranking |
+| `memory_links` | Relationships between memories (`related` / `duplicate`) with a score |
+| `memory_metadata` | Arbitrary **AES-256-GCM-encrypted** key/value metadata |
+| `memory_search_logs` | Per-search audit + analytics (query, result count, latency) |
+| `knowledge_sources` | Distinct ingestion origins, unique per (user, type, external_ref) — dedupes imports |
+
+Key indexes: `ix_memory_items_user_status`, `ix_memory_items_user_type`,
+`ix_memory_tags_tag`. Soft-deleted rows are purged by the cleanup worker after
+`MEMORY_RETENTION_DAYS`.
+
 ## Entity relationships
 
 ```
 users 1 ──────< refresh_tokens        (cascade delete)
 users 1 ──────< audit_logs            (set null on delete)
 users 1 ──────< conversations 1 ──< messages   (cascade delete)
+users 1 ──────< memory_items 1 ──1 memory_embeddings   (cascade delete)
+memory_items 1 ──< memory_tags / memory_metadata / memory_links
+users 1 ──────< memory_collections 1 ──< memory_collection_items >── memory_items
 ```
 
 ## Planned tables (future modules)

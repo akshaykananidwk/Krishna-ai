@@ -26,6 +26,11 @@ redis==5.2.1
 # ---- AI ----
 anthropic==0.69.0
 
+# ---- Vector search (Memory Engine) ----
+qdrant-client==1.12.1
+# Optional embedding providers (lazy-imported; install as needed):
+#   openai>=1.55        google-genai>=0.3
+
 # ---- Utils ----
 python-dotenv==1.0.1
 httpx==0.28.1

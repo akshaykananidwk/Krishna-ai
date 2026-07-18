@@ -89,6 +89,41 @@ concurrent refreshes.
 | Mobile secrets | Android Keystore-backed `EncryptedSharedPreferences` |
 | Federated identity | Firebase-ready (`firebase_uid` column, token-exchange schema) |
 
+## Memory Engine & RAG (Module 4)
+
+The memory engine turns any data source (conversations, notes, meetings, …)
+into vector-searchable knowledge. Two provider abstractions keep it swappable:
+
+- **`EmbeddingProvider`** (`app/services/embeddings`): `local` (deterministic,
+  dependency-free — dev/test), `openai`, `gemini`. Selected by
+  `EMBEDDING_PROVIDER`; never hardcoded.
+- **`VectorStore`** (`app/services/vectorstore`): `qdrant` (production) or
+  `memory` (in-process cosine — dev/test). Selected by `VECTOR_STORE`.
+
+PostgreSQL stays the source of truth; the vector store holds only vectors keyed
+by `memory_items.id`, with a payload (`user_id`, `source_type`, `tags`,
+`status`, `created_at`) used for filtered, isolated search.
+
+```
+create memory ─▶ persist (PG) ─▶ embed ─▶ upsert vector (+dedupe link)
+                                     └▶ record embedding status (ready/failed)
+
+RAG query ─▶ embed ─▶ vector search ─▶ rank ─▶ context build ─▶ prompt ─▶ LLM ─▶ SSE
+```
+
+**Ranking** (`services/memory/ranking.py`, pure/testable) blends similarity,
+recency (exponential decay), importance, access frequency, feedback, and a
+pinned boost. **Context building** (`context_builder.py`) bounds prompt size by
+a character budget, prioritising the highest-ranked memories.
+
+**RAG reuses the AI-Chat `LLMClient` by composition** — the existing chat module
+is untouched; `/rag/query` is the memory-aware assistant.
+
+**Background workers** (`services/memory/maintenance.py`) — `cleanup_deleted`,
+`retry_failed_embeddings`, `reindex_user` — are dependency-injected async
+functions (testable) with thin `run_*` production wrappers that own a DB session.
+In production these run under cron or a Celery/RQ worker.
+
 ## Scalability notes
 
 - **Stateless API**: horizontal scaling behind a load balancer; sessions live in

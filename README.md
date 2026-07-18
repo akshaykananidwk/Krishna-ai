@@ -22,9 +22,9 @@ Krishna AI is a modular, production-oriented personal assistant. It pairs a
 modules (chat, voice, notes, meetings, tasks, RAG-based memory, and more),
 delivered **incrementally** — one fully-tested module at a time.
 
-> **Status:** Foundation, **Authentication**, and **AI Chat** (streaming, with
-> conversation history) complete and tested. See [`docs/ROADMAP.md`](docs/ROADMAP.md)
-> for the module plan and progress.
+> **Status:** Foundation, **Authentication**, **AI Chat** (streaming), and the
+> **Memory Engine** (vector search + RAG) complete and tested. See
+> [`docs/ROADMAP.md`](docs/ROADMAP.md) for the module plan and progress.
 
 ## Repository structure
 
@@ -103,6 +103,23 @@ flutter run                                # emulator reaches host at 10.0.2.2
   indicator, optimistic sends, and error recovery.
 - Set `ANTHROPIC_API_KEY` in `backend/.env` to enable it (endpoints return
   `503 ai_unavailable` until configured).
+
+## Module 4 — Memory Engine + Vector Search + RAG (implemented)
+
+The heart of Krishna AI: every note/conversation/document becomes searchable
+personal knowledge.
+
+- **Provider-agnostic embeddings** (`local` deterministic / `openai` / `gemini`)
+  and **vector store** (`qdrant` / in-memory) — never hardcoded, swap via env.
+- **Semantic + filtered search** (type, tag, time), **multi-signal ranking**
+  (similarity · recency · importance · frequency · feedback · pinned), and a
+  streaming **RAG** endpoint (`/rag/query`) that grounds answers in your memories.
+- Auto-tagging, auto-embedding, duplicate detection, encrypted metadata,
+  soft-delete/restore/archive, bookmarks, feedback, collections, and background
+  maintenance workers (cleanup / retry / reindex).
+- Runs fully offline in dev/test (local embedder + in-process cosine store);
+  production uses **Qdrant + OpenAI/Gemini**. Mobile: a memory search screen +
+  data/repository hooks.
 
 ## Documentation
 

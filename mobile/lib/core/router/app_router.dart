@@ -9,6 +9,7 @@ import '../../features/auth/presentation/providers/auth_controller.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/pages/conversations_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/memory/presentation/memory_search_page.dart';
 
 /// Route paths as constants to avoid stringly-typed navigation.
 abstract final class Routes {
@@ -18,6 +19,7 @@ abstract final class Routes {
   static const home = '/home';
   static const conversations = '/conversations';
   static const chat = '/chat';
+  static const memory = '/memory';
 }
 
 /// A [GoRouter] whose redirects are driven by [AuthState]. A [ValueNotifier]
@@ -47,6 +49,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '${Routes.chat}/:id',
         builder: (_, state) =>
             ChatPage(conversationId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: Routes.memory,
+        builder: (_, __) => const MemorySearchPage(),
       ),
     ],
     redirect: (context, state) {
