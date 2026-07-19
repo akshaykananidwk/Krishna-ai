@@ -1,0 +1,2 @@
+# Internal route files are never accessed directly.
+Require all denied

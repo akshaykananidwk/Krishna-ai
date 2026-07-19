@@ -1,0 +1,7 @@
+# Document-root protection for Krishna AI.
+Options -Indexes
+
+# Never serve the config file or the SQL schema over HTTP.
+<FilesMatch "^(config\.php|config\.sample\.php|schema\.sql)$">
+    Require all denied
+</FilesMatch>

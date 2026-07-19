@@ -1,0 +1,14 @@
+# Route every /api/* request through the front controller.
+RewriteEngine On
+
+# Pass the Authorization header through to PHP (needed for Bearer tokens).
+CGIPassAuth On
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Send anything that is not a real file/dir to index.php.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+Options -Indexes
