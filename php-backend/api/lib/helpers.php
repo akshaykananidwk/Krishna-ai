@@ -31,6 +31,23 @@ function uuidv4(): string {
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
 }
 
+/**
+ * UUID version 7: a 48-bit millisecond timestamp followed by random bits.
+ * These sort lexicographically in creation order, so rows keyed by them stay in
+ * the right order even when their DATETIME (second-precision) values collide.
+ */
+function uuidv7(): string {
+    $ms  = (int) (microtime(true) * 1000);
+    $ts  = str_pad(dechex($ms), 12, '0', STR_PAD_LEFT);   // 48 bits → 12 hex chars
+    $b   = hex2bin($ts) . random_bytes(10);               // 6 + 10 = 16 bytes
+    $b[6] = chr((ord($b[6]) & 0x0f) | 0x70);              // version 7
+    $b[8] = chr((ord($b[8]) & 0x3f) | 0x80);             // RFC 4122 variant
+    $h = bin2hex($b);
+    return sprintf('%s-%s-%s-%s-%s',
+        substr($h, 0, 8), substr($h, 8, 4), substr($h, 12, 4),
+        substr($h, 16, 4), substr($h, 20, 12));
+}
+
 /** Current UTC time as 'Y-m-d H:i:s' (all timestamps are stored in UTC). */
 function now_utc(): string {
     return gmdate('Y-m-d H:i:s');

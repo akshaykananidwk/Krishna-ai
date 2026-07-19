@@ -30,10 +30,11 @@ if (!file_exists($configPath)) {
 }
 $CONFIG = require $configPath;
 
-require __DIR__ . '/lib/helpers.php';
-require __DIR__ . '/lib/db.php';
-require __DIR__ . '/lib/jwt.php';
-require __DIR__ . '/lib/auth.php';
+// Load every helper library. New files under lib/ are picked up automatically,
+// so you never have to edit this file when adding a module.
+foreach (glob(__DIR__ . '/lib/*.php') as $lib) {
+    require $lib;
+}
 
 // --- Route registry ---
 $ROUTES = [];
@@ -49,9 +50,10 @@ try {
     error_out(500, 'db_error', 'Database connection failed.');
 }
 
-// --- Register routes ---
-require __DIR__ . '/routes/auth.php';
-// Part 2 (chat) and Part 3 (memory) route files are added here later.
+// Register every route file. Drop a new file in routes/ and it just works.
+foreach (glob(__DIR__ . '/routes/*.php') as $routeFile) {
+    require $routeFile;
+}
 
 // --- Work out the path after /api (also accepts an optional /v1) ---
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
