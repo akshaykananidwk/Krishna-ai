@@ -22,13 +22,23 @@ jobs:
         working-directory: mobile
         run: flutter create .
 
+      - name: Ensure INTERNET permission in the release manifest
+        working-directory: mobile
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          if ! grep -q 'android.permission.INTERNET' "$MANIFEST"; then
+            sed -i 's#<manifest\(.*\)>#<manifest\1>\n    <uses-permission android:name="android.permission.INTERNET"/>#' "$MANIFEST"
+          fi
+          echo "----- AndroidManifest.xml -----"
+          cat "$MANIFEST"
+
       - name: Get packages
         working-directory: mobile
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build APK (production URL is the default)
         working-directory: mobile
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define=API_BASE_URL=https://krishnaai.akdwk.in --dart-define=API_PREFIX=/api
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

@@ -67,7 +67,10 @@ flutter run --dart-define=API_BASE_URL=https://api.krishna.example.com
 
 ### Required Android permissions
 
-Add to `android/app/src/main/AndroidManifest.xml`:
+Release APKs need the INTERNET permission (Flutter only adds it to debug
+builds). The **Build APK** GitHub Actions workflow injects it automatically
+after `flutter create .`. If you build locally, add it yourself to
+`android/app/src/main/AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
