@@ -59,6 +59,36 @@ function iso(?string $dt): ?string {
     return str_replace(' ', 'T', $dt) . 'Z';
 }
 
+/** Parse an incoming ISO-8601 timestamp into UTC 'Y-m-d H:i:s', or null. */
+function parse_dt($v): ?string {
+    if ($v === null || $v === '' || !is_string($v)) return null;
+    $ts = strtotime($v);
+    return $ts === false ? null : gmdate('Y-m-d H:i:s', $ts);
+}
+
+/** Parse an incoming date (YYYY-MM-DD) into 'Y-m-d', or null. */
+function parse_date($v): ?string {
+    if ($v === null || $v === '' || !is_string($v)) return null;
+    $ts = strtotime($v);
+    return $ts === false ? null : gmdate('Y-m-d', $ts);
+}
+
+/** Coerce a JSON value (bool/int/string) into a 0/1 integer for TINYINT columns. */
+function b_int($v): int {
+    return ($v === true || $v === 1 || $v === '1' || $v === 'true' || $v === 'yes') ? 1 : 0;
+}
+
+/**
+ * Fetch a row from $table owned by $userId, or null. $table is always a
+ * hard-coded literal from route code (never user input), so it is safe to
+ * interpolate.
+ */
+function own_row(PDO $pdo, string $table, string $userId, string $id): ?array {
+    $stmt = $pdo->prepare("SELECT * FROM $table WHERE id = ? AND user_id = ?");
+    $stmt->execute([$id, $userId]);
+    return $stmt->fetch() ?: null;
+}
+
 function client_ip(): ?string {
     return $_SERVER['REMOTE_ADDR'] ?? null;
 }

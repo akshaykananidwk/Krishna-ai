@@ -4,10 +4,16 @@ A dependency-free PHP 8 backend (plain PDO, no Composer/framework) for shared
 hosting such as **aaPanel + Apache + MariaDB 10.11 + PHP 8.3**. It serves the
 REST API the Flutter app already expects.
 
-> **Part 1 (this folder):** the web installer + **Auth API**
-> (`register` / `login` / `refresh` / `logout` / `me`). The schema already
-> creates every table (chat, memories, cache, audit) so the database is made
-> once; the Chat (Part 2) and Memory (Part 3) route files plug in later.
+> Modules covered: **Auth**, **AI Chat** (Google Gemini, streamed),
+> **Memory**, **Profile & Settings**, **Notes & Smart Notes**, **Tasks**,
+> **Reminders**, **Calendar**, **Habits**, **Goals**, **Meetings** & **Email**
+> (AI), **Daily/Weekly Planner**, **Notifications**, **Cloud Sync**, and
+> **Privacy / Backup & Restore**. Every route file in `api/routes/` is loaded
+> automatically, so adding a module never means editing the front controller.
+>
+> Existing installs: run `migrations/2026_module_expansion.sql` once (in
+> phpMyAdmin) to add the new tables. Fresh installs get everything from the
+> installer.
 
 ## Where the files go
 

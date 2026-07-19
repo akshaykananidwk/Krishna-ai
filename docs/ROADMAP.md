@@ -5,7 +5,7 @@ architecture, data model, API, UI, business logic, tests, and docs before the
 next begins.
 
 ## Legend
-✅ done · 🚧 in progress · ⬜ planned
+✅ done · 🅱️ backend API ready (mobile screen pending) · 🚧 in progress · ⬜ planned
 
 ## Foundation
 - ✅ Monorepo structure, docs, CI (backend + mobile), Docker stack
@@ -25,36 +25,36 @@ next begins.
 | # | Module | Status |
 |---|--------|--------|
 | 1 | Authentication | ✅ done |
-| 2 | User Profile | ⬜ |
+| 2 | User Profile | 🅱️ backend |
 | 3 | AI Chat | ✅ done |
 | 6 | Conversation History | ✅ done (with AI Chat) |
-| 4 | Voice Input | ⬜ |
-| 5 | Speech-to-Text | ⬜ |
-| 6 | Text-to-Speech | ⬜ |
-| 7 | Notes | ⬜ |
-| 8 | Smart Notes | ⬜ |
-| 9 | Meeting Summaries | ⬜ |
-| 10 | Tasks | ⬜ |
-| 11 | Reminders | ⬜ |
-| 12 | Calendar | ⬜ |
+| 4 | Voice Input | ⬜ (device/speech — out of pure-PHP scope) |
+| 5 | Speech-to-Text | ⬜ (device/speech — out of pure-PHP scope) |
+| 6 | Text-to-Speech | ⬜ (device/speech — out of pure-PHP scope) |
+| 7 | Notes | 🅱️ backend |
+| 8 | Smart Notes | 🅱️ backend (AI enhance) |
+| 9 | Meeting Summaries | 🅱️ backend (AI) |
+| 10 | Tasks | 🅱️ backend |
+| 11 | Reminders | 🅱️ backend |
+| 12 | Calendar | 🅱️ backend |
 | 13 | Personal Knowledge Base | ✅ done (Memory Engine) |
 | 14 | Semantic Search | ✅ done (Memory Engine) |
 | 15 | AI Memory | ✅ done (Memory Engine + RAG) |
-| 16 | OCR | ⬜ |
-| 17 | Image Understanding | ⬜ |
-| 18 | Document Analysis | ⬜ |
-| 19 | PDF Chat | ⬜ |
-| 20 | Email Assistant | ⬜ |
-| 21 | Daily Planner | ⬜ |
-| 22 | Weekly Planner | ⬜ |
-| 23 | Habit Tracker | ⬜ |
-| 24 | Goals | ⬜ |
-| 25 | Notifications | ⬜ |
-| 26 | Offline Mode | ⬜ |
-| 27 | Cloud Sync | ⬜ |
-| 28 | Settings | ⬜ |
-| 29 | Privacy Controls | ⬜ |
-| 30 | Backup & Restore | ⬜ |
+| 16 | OCR | ⬜ (needs image capture + vision pipeline) |
+| 17 | Image Understanding | ⬜ (needs image capture + vision pipeline) |
+| 18 | Document Analysis | ⬜ (needs file upload pipeline) |
+| 19 | PDF Chat | ⬜ (needs file upload pipeline) |
+| 20 | Email Assistant | 🅱️ backend (AI) |
+| 21 | Daily Planner | 🅱️ backend |
+| 22 | Weekly Planner | 🅱️ backend |
+| 23 | Habit Tracker | 🅱️ backend |
+| 24 | Goals | 🅱️ backend |
+| 25 | Notifications | 🅱️ backend (token registry + in-app feed) |
+| 26 | Offline Mode | ⬜ (client-only, no backend) |
+| 27 | Cloud Sync | 🅱️ backend (pull sync) |
+| 28 | Settings | 🅱️ backend |
+| 29 | Privacy Controls | 🅱️ backend (export + delete) |
+| 30 | Backup & Restore | 🅱️ backend |
 
 ## Suggested sequencing
 

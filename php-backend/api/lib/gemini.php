@@ -115,3 +115,17 @@ function gemini_stream(array $config, string $system, array $messages, int $maxT
 
     return ['ok' => $error === null, 'text' => $full, 'error' => $error];
 }
+
+/**
+ * Non-streaming Gemini completion. Same return shape as gemini_stream().
+ * Used by the text AI helpers (smart notes, meeting summaries, email drafts).
+ */
+function gemini_complete(array $config, string $system, string $prompt, int $maxTokens = 1024): array {
+    $collected = '';
+    return gemini_stream(
+        $config, $system,
+        [['role' => 'user', 'content' => $prompt]],
+        $maxTokens,
+        function (string $t) use (&$collected) { $collected .= $t; }
+    );
+}
