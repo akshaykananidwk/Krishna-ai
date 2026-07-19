@@ -172,8 +172,8 @@ route('POST', '/chat/conversations/{id}/messages', function ($params) {
 
     $send(['type' => 'start', 'conversation_id' => $conv['id'], 'message_id' => $userMsgId]);
 
-    $model = $CONFIG['anthropic_model'] ?: 'claude-opus-4-8';
-    $result = anthropic_stream(
+    $model = $CONFIG['gemini_model'] ?: 'gemini-2.0-flash';
+    $result = gemini_stream(
         $CONFIG,
         CHAT_SYSTEM_PROMPT,
         $history,

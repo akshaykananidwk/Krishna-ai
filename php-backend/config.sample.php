@@ -13,9 +13,9 @@ return [
     'access_ttl'        => 1800,      // access token lifetime, seconds (30 min)
     'refresh_ttl'       => 2592000,   // refresh token lifetime, seconds (30 days)
 
-    // Used by the Chat module in Part 2.
-    'anthropic_api_key' => '',
-    'anthropic_model'   => 'claude-opus-4-8',
+    // Used by the Chat module. Google Gemini (generativelanguage.googleapis.com).
+    'gemini_api_key'    => '',
+    'gemini_model'      => 'gemini-2.0-flash',
 
     'app_url'           => 'https://krishnaai.akdwk.in',
 ];

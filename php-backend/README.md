@@ -41,7 +41,7 @@ installer writes it for you.
 1. In aaPanel, create a **MySQL database + user**.
 2. Upload the files above to the document root.
 3. Open **`https://krishnaai.akdwk.in/install`**, pass the environment checks,
-   fill the form (DB creds + Anthropic key + admin account), submit.
+   fill the form (DB creds + Google Gemini key + admin account), submit.
 4. Delete the `install` folder.
 
 The API is then live under `https://krishnaai.akdwk.in/api/...`. It accepts both
